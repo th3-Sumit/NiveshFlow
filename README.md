@@ -537,6 +537,16 @@ Secret scanning remains enabled: there are no path/key exclusions. After deployi
 
 If a real password or provider key was ever committed, logged, or published, rotate it at its provider and update the private environment settings. Removing it from the current tree does not erase Git history. Run `npm run test:deployment` to check the cache cleanup and seeding safeguards without connecting to live services.
 
+### Scheduled Database Health Check
+
+`netlify/functions/database-health.mjs` is a native Netlify Scheduled Function. It runs once daily at midnight UTC (05:30 India time) on the published production deploy, even when nobody opens the app. `netlify.toml` identifies the functions directory; the existing Next.js build settings and adapter remain unchanged.
+
+The function uses the existing private `MONGO_URI` with Functions scope. It makes one small read from `_systemHealth`, a reserved operational collection; an empty or nonexistent collection is fine. It never reads user profiles or finance records, creates documents, or changes balances. Each invocation opens a single-connection pool, bounds driver/query timeouts, closes the client, and logs only a generic success or failure message. No public cron endpoint, extra token, third-party scheduler, or Atlas admin API key is needed.
+
+Deploy the updated repository to activate the schedule. Then open Netlify > NiveshFlow > Cloud compute > Functions > `database-health`. Confirm its Scheduled badge and next run, click **Run now**, and inspect the function logs for `Scheduled database health check succeeded.` Tests and `next build` do not activate the job or connect it to production. Run `npm run test:database-health` for isolated checks with no live database access.
+
+[MongoDB Atlas](https://www.mongodb.com/docs/atlas/pause-terminate-cluster/) automatically pauses inactive Free clusters after 30 days. The daily real database read is intended to avoid that inactivity condition, but is not an availability guarantee. It does not automatically resume a cluster already paused or solve invalid credentials, network restrictions, outages, or suspended Netlify deployments. If paused, resume it in Atlas first and rerun the check. Flex clusters do not automatically pause for inactivity. Keep Atlas alerts enabled and inspect failed runs; scheduled invocations count toward Netlify Functions usage. See [Netlify Scheduled Functions](https://docs.netlify.com/build/functions/scheduled-functions/).
+
 ### MongoDB TLS Or Server Selection Error
 
 If signup or seeding fails with MongoDB TLS/server selection errors:

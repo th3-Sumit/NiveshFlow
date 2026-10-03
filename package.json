@@ -12,6 +12,7 @@
     "test:lifecycle": "node --test scripts/test-lifecycle.mjs",
     "test:finance": "node --test scripts/test-finance-lists.mjs",
     "test:deployment": "node --test scripts/test-deployment.mjs",
+    "test:database-health": "node --test scripts/test-database-health.mjs",
     "seed:admin": "node scripts/seed-super-admin.mjs"
   },
   "dependencies": {
