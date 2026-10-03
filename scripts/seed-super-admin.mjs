@@ -50,8 +50,8 @@ loadLocalEnv();
 
 const mongoUri = process.env.MONGO_URI;
 const password = process.env.SUPER_ADMIN_PASSWORD;
-const name = process.env.SUPER_ADMIN_NAME || "Super Admin";
-const phone = process.env.SUPER_ADMIN_PHONE || "+910000000000";
+const name = process.env.SUPER_ADMIN_NAME?.trim();
+const phone = process.env.SUPER_ADMIN_PHONE?.trim();
 const resetPassword = process.env.SUPER_ADMIN_RESET_PASSWORD === "true";
 
 if (!mongoUri) {
@@ -61,8 +61,13 @@ if (!mongoUri) {
 
 if (!password) {
   console.error(
-    "SUPER_ADMIN_PASSWORD is required. Example: SUPER_ADMIN_PASSWORD=\"StrongPass#123\" npm run seed:admin",
+    "SUPER_ADMIN_PASSWORD is required in .env.local or the current shell.",
   );
+  process.exit(1);
+}
+
+if (!name || !phone) {
+  console.error("SUPER_ADMIN_NAME and SUPER_ADMIN_PHONE are required. Set the administrator's real contact details before seeding.");
   process.exit(1);
 }
 

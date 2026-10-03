@@ -49,8 +49,8 @@ Super admin seeding:
 
 ```env
 SUPER_ADMIN_PASSWORD=
-SUPER_ADMIN_NAME=Super Admin
-SUPER_ADMIN_PHONE=+910000000000
+SUPER_ADMIN_NAME=
+SUPER_ADMIN_PHONE=
 ```
 
 `AUTH_SECRET` is recommended for stable session encryption. If it is missing, the app falls back to other configured secrets, but a dedicated auth secret is cleaner.
@@ -75,36 +75,23 @@ npm run lint
 npm run build
 ```
 
-## Super Admin
+## Administrator Account
 
 The super admin email is:
 
 ```text
-kumarsumit747037@gmail.com
+`#############@@gmail.com
 ```
 
 Any user signing up with this email is automatically assigned the `super_admin` role.
 
-To seed the super admin directly:
+Set `SUPER_ADMIN_PASSWORD`, `SUPER_ADMIN_NAME`, and `SUPER_ADMIN_PHONE` privately in `.env.local` or your current shell, then seed the account:
 
 ```bash
-SUPER_ADMIN_PASSWORD="StrongPass#123" npm run seed:admin
-```
-
-On Windows PowerShell:
-
-```powershell
-$env:SUPER_ADMIN_PASSWORD="StrongPass#123"
 npm run seed:admin
 ```
 
-Optional:
-
-```powershell
-$env:SUPER_ADMIN_NAME="Sumit Kumar"
-$env:SUPER_ADMIN_PHONE="+919999999999"
-npm run seed:admin
-```
+All three values are required. The script has no default identity, phone number, or password. Do not copy credentials into documentation, commit them, or run seeding as part of deployment. These variables are used only by the seeding script; the deployed application does not need them.
 
 If the admin already exists, the script promotes the account to `super_admin`. It only resets the password when this is also set:
 
@@ -143,7 +130,7 @@ Purpose:
 - Allows profile image upload during onboarding.
 - Stores profile image in Cloudinary.
 - Creates a session after signup.
-- Assigns `super_admin` role if email matches `kumarsumit747037@gmail.com`.
+- Assigns `super_admin` role if email matches `#############@gmail.com`.
 
 ### Login
 
@@ -362,7 +349,7 @@ The upload limit is configured as 16 MB in Next.js to accommodate three 5 MB att
 
 Run `npm run test:support` for isolated authorization, request validation, profile email protection, attachment privacy, cleanup, and transactional email-change checks. These tests mock MongoDB and Cloudinary and do not write live data.
 
-## Super Admin Area
+## Platform Administration
 
 Path:
 
@@ -535,6 +522,20 @@ npm run seed:admin
 ```
 
 ## Troubleshooting
+
+### Netlify Deployment And Secret Scanning
+
+Use `npm run build` as the build command and `.next` as the publish directory, with Netlify's automatically detected Next.js adapter. This app uses server actions and authenticated server rendering; do not deploy it as a static export.
+
+Configure `MONGO_URI`, `CLOUD_NAME`, `CLOUD_API_KEY`, `CLOUD_API_SECRET`, `EMAIL_USER`, `EMAIL_PASS`, and a dedicated `AUTH_SECRET` in Netlify's environment-variable settings, not in committed files or `next.config.ts.env`. Set `APP_URL` to the production HTTPS origin for invitations. If scopes are available, ensure application variables are available to Functions; this app's database module is also evaluated during builds, so `MONGO_URI` needs Builds access too. Variables in `netlify.toml` alone are not available to serverless functions. See [Netlify function environment variables](https://docs.netlify.com/build/functions/environment-variables/).
+
+Remove `SUPER_ADMIN_NAME`, `SUPER_ADMIN_PHONE`, `SUPER_ADMIN_PASSWORD`, and `SUPER_ADMIN_RESET_PASSWORD` from the site's build/runtime environment after running the seed script separately. Never prefix private variables with `NEXT_PUBLIC_`. `CLOUDINARY_URL` is not read by this app; configure the three `CLOUD_*` variables instead.
+
+Next.js 16.3 enables persistent Turbopack build caching by default. Its binary compiler cache can retain environment values even when browser bundles do not contain them. `next.config.ts` disables that build cache when Netlify's `NETLIFY=true` flag is present. The npm `postbuild` hook removes only restored `.next/cache/turbopack` and `.netlify/.next/cache/turbopack` directories on Netlify. Local builds/development, deployed bundles, and route/runtime caches are untouched. Netlify artifacts are also ignored by Git.
+
+Secret scanning remains enabled: there are no path/key exclusions. After deploying this fix, clear Netlify's build cache and retry the deploy once to discard artifacts from older builds. Review the new scan results. A match in source, `.next/static`, server bundles, or function artifacts must be investigated and removed, not ignored. [Netlify secret scanning](https://docs.netlify.com/build/environment-variables/secrets-controller/) checks repository code and generated files before deployment; a failure alone does not prove a credential reached a public client.
+
+If a real password or provider key was ever committed, logged, or published, rotate it at its provider and update the private environment settings. Removing it from the current tree does not erase Git history. Run `npm run test:deployment` to check the cache cleanup and seeding safeguards without connecting to live services.
 
 ### MongoDB TLS Or Server Selection Error
 

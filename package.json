@@ -5,11 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "node scripts/clean-netlify-cache.mjs",
     "start": "next start",
     "lint": "eslint",
     "test:support": "node --test scripts/test-support.mjs",
     "test:lifecycle": "node --test scripts/test-lifecycle.mjs",
     "test:finance": "node --test scripts/test-finance-lists.mjs",
+    "test:deployment": "node --test scripts/test-deployment.mjs",
     "seed:admin": "node scripts/seed-super-admin.mjs"
   },
   "dependencies": {
