@@ -3,16 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node api.js && next dev",
     "build": "next build",
     "postbuild": "node scripts/clean-netlify-cache.mjs",
-    "start": "next start",
+    "start": "node api.js && next start",
     "lint": "eslint",
     "test:support": "node --test scripts/test-support.mjs",
     "test:lifecycle": "node --test scripts/test-lifecycle.mjs",
     "test:finance": "node --test scripts/test-finance-lists.mjs",
     "test:deployment": "node --test scripts/test-deployment.mjs",
     "test:database-health": "node --test scripts/test-database-health.mjs",
+    "test:seo": "node --test scripts/test-seo.mjs",
+    "generate:icons": "node scripts/generate-icons.mjs",
     "seed:admin": "node scripts/seed-super-admin.mjs"
   },
   "dependencies": {
