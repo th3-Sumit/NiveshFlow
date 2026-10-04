@@ -1,5 +1,8 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { LandingMotion } from "@/app/components/landing/landing-motion";
+import { AccountDeletedNotice } from "@/app/components/landing/account-deleted-notice";
+import { getSiteStructuredData, homeMetadata, serializeStructuredData } from "@/app/lib/seo";
 import {
   ArrowRight,
   BadgeCheck,
@@ -16,11 +19,11 @@ import {
 const flowSteps = [
   {
     title: "Create your workspace",
-    text: "Start with a secure profile, verified contact details, and a private finance vault.",
+    text: "Create your account and keep your personal finance records in your own workspace.",
   },
   {
     title: "Track money cleanly",
-    text: "Organize income, expenses, goals, budgets, and accounts under one personal dashboard.",
+    text: "Organize accounts, record income and expenses, and explore cash flow charts in your dashboard.",
   },
   {
     title: "Plan your next milestone",
@@ -37,10 +40,12 @@ const features = [
   "Your profile, your details",
 ];
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ accountDeleted?: string; notification?: string }> }) {
-  const params = await searchParams;
+export const metadata = homeMetadata;
+
+export default function Home() {
   return (
     <LandingMotion>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeStructuredData(getSiteStructuredData()) }} />
     <main className="min-h-screen pt-[116px] text-slate-950 sm:pt-[104px]">
       <header className="fixed inset-x-0 top-6 z-20 px-5 sm:px-8 lg:px-10">
       <nav data-landing-motion="nav" aria-label="Main navigation" className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 rounded-2xl border border-teal-100 bg-white/90 px-3 py-4 shadow-sm backdrop-blur-xl sm:gap-4 sm:px-5">
@@ -71,8 +76,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ a
       </header>
 
       <div className="px-5 sm:px-8 lg:px-10">
-      {params.accountDeleted === "1" ? <div role="status" className="mt-5 rounded-lg border border-teal-200 bg-teal-50 p-4 text-sm text-teal-900">Your account has been permanently deleted. {params.notification === "sent" ? "A confirmation was sent to your email." : "Your email confirmation is queued for delivery."}</div> : null}
-      <section className="grid w-full min-w-0 items-center gap-10 pb-16 pt-14 lg:grid-cols-[1.03fr_0.97fr] lg:pb-24 lg:pt-20">
+      <Suspense fallback={null}><AccountDeletedNotice /></Suspense>
+      <section aria-label="Personal finance management" className="grid w-full min-w-0 items-center gap-10 pb-16 pt-14 lg:grid-cols-[1.03fr_0.97fr] lg:pb-24 lg:pt-20">
         <div className="max-w-3xl">
           <div data-landing-motion="reveal" data-motion-delay="40" className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50/80 px-4 py-2 text-sm font-semibold text-emerald-900 shadow-sm">
             <Sparkles size={16} />
@@ -82,8 +87,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ a
             NiveshFlow
           </h1>
           <p data-landing-motion="reveal" data-motion-delay="160" className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 sm:text-xl">
-            Bring your accounts, spending, and goals into focus. Make room for
-            the things that matter with a clearer view of your money.
+            Personal finance management for everyday life. Track income and
+            expenses, manage accounts and debt, and plan savings goals with a
+            clearer view of your money.
           </p>
           <div data-landing-motion="reveal" data-motion-delay="220" className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link className="group btn btn-dark h-14 px-6 text-base" href="/signup">
@@ -121,10 +127,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ a
           <div className="glass-card p-5 sm:p-6">
             <div className="flex items-center justify-between border-b border-white/60 pb-5">
               <div>
-                <p className="text-sm font-semibold text-slate-500">
+                <h2 className="text-sm font-semibold text-slate-500">
                   Workspace preview
-                </p>
-                <h2 className="mt-1 text-3xl font-semibold">Rs. 84,300</h2>
+                </h2>
+                <p className="mt-1 text-3xl font-semibold">Rs. 84,300</p>
               </div>
               <span className="flex size-12 items-center justify-center rounded-2xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/25">
                 <ChartNoAxesCombined size={23} />
@@ -139,7 +145,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ a
                 </div>
               </div>
               <div className="rounded-[24px] border border-white/70 bg-white/60 p-5 shadow-sm">
-                <p className="text-sm font-medium text-slate-500">Budget left</p>
+                <p className="text-sm font-medium text-slate-500">Cash remaining</p>
                 <p className="mt-3 text-3xl font-semibold">Rs. 18,950</p>
                 <div className="mt-5 flex gap-2">
                   <span data-landing-motion="bar" data-motion-delay="280" className="h-2 flex-1 origin-left rounded-full bg-rose-400" />
@@ -174,14 +180,16 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ a
 
       <section
         id="flow"
+        aria-labelledby="flow-heading"
         className="grid w-full min-w-0 scroll-mt-32 gap-4 py-10 lg:grid-cols-3"
       >
+        <h2 id="flow-heading" className="sr-only">How NiveshFlow works</h2>
         {flowSteps.map((item, index) => (
           <article data-landing-motion="reveal" data-motion-delay={index * 70} className="group glass-card p-6 motion-safe:transition-transform motion-safe:duration-300 motion-safe:hover:-translate-y-1" key={item.title}>
             <span className="flex size-11 items-center justify-center rounded-2xl bg-white text-sm font-bold shadow-sm">
               0{index + 1}
             </span>
-            <h2 className="mt-6 text-2xl font-semibold">{item.title}</h2>
+            <h3 className="mt-6 text-2xl font-semibold">{item.title}</h3>
             <p className="mt-3 leading-7 text-slate-600">{item.text}</p>
           </article>
         ))}
@@ -189,14 +197,15 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ a
 
       <section
         id="security"
+        aria-labelledby="security-heading"
         className="grid w-full min-w-0 scroll-mt-32 gap-5 py-10 lg:grid-cols-[0.8fr_1.2fr]"
       >
         <div data-landing-motion="reveal" className="group glass-card p-7">
           <div className="flex size-12 items-center justify-center rounded-2xl bg-rose-500 text-white shadow-lg shadow-rose-500/20 motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:-rotate-6">
             <LockKeyhole size={23} />
           </div>
-          <h2 className="mt-6 text-3xl font-semibold">
-            A little peace of mind.
+          <h2 id="security-heading" className="mt-6 text-3xl font-semibold">
+            Your finances, in a private workspace.
           </h2>
           <p className="mt-4 leading-7 text-slate-600">
             Sign in with a password or a verification code. Your accounts and
@@ -220,6 +229,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ a
 
       <section
         id="workspace"
+        aria-labelledby="workspace-heading"
         className="mb-12 grid w-full min-w-0 scroll-mt-32 gap-5 py-10 lg:grid-cols-[1.1fr_0.9fr]"
       >
         <div data-landing-motion="reveal" className="group glass-card p-7 sm:p-9">
@@ -231,8 +241,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ a
               Your personal workspace
             </span>
           </div>
-          <h2 className="mt-7 max-w-3xl text-3xl font-semibold leading-tight">
-            Everyday clarity. Bigger possibilities.
+          <h2 id="workspace-heading" className="mt-7 max-w-3xl text-3xl font-semibold leading-tight">
+            Accounts, transactions, debt, and savings goals.
           </h2>
           <p className="mt-5 max-w-2xl leading-7 text-slate-600">
             Start with the accounts you use most. Record income and expenses,

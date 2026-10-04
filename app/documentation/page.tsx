@@ -27,6 +27,9 @@ import {
 } from "@/app/components/ui/card";
 import { requireCurrentUser } from "@/app/lib/data";
 import { HelpCenterTrigger } from "@/app/components/support/help-center-trigger";
+import { privatePageMetadata } from "@/app/lib/seo";
+
+export const metadata = privatePageMetadata("User guide", "Learn how to use accounts, transactions, debt tracking, planning, and profile settings in NiveshFlow.");
 
 const onboardingFlow = [
   {

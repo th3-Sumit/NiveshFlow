@@ -586,7 +586,28 @@ Check:
 
 ### Invitation Configuration
 
-Set `APP_URL` to the canonical public application origin, for example `https://finance.example.com`. Production invitations require HTTPS. `NEXT_PUBLIC_APP_URL` is a fallback; development defaults to `http://localhost:3000`. SMTP uses the existing `EMAIL_USER` and `EMAIL_PASS` configuration. Never expose SMTP, MongoDB, Cloudinary, session, invitation, or reset secrets in public environment variables.
+Set `APP_URL` to the canonical public application origin, for example `https://finance.example.com`. Production invitations require HTTPS. `NEXT_PUBLIC_APP_URL` is a fallback; development invitation links default to `http://localhost:3000`. SMTP uses the existing `EMAIL_USER` and `EMAIL_PASS` configuration. Never expose SMTP, MongoDB, Cloudinary, session, invitation, or reset secrets in public environment variables.
+
+### Search And Sharing Metadata
+
+`app/lib/seo.ts` owns site titles, descriptions, canonical origin, indexing policy, and public structured data. Each page has a descriptive title; metadata never uses user names, email addresses, financial balances, invitation tokens, or administrator identity details.
+
+Set `APP_URL` to your primary HTTPS origin with **Builds and Functions** scope in Netlify. SEO uses it at build time; invitations use it at runtime. `NEXT_PUBLIC_APP_URL` is the fallback. Without either, SEO defaults to `https://niveshflow.netlify.app/`. URL credentials and invalid protocols are rejected, and path, query, and fragment values are removed. Rebuild after changing the domain. Configure redirects from secondary domains to the primary domain in the hosting provider as well.
+
+The public landing page has a canonical URL, Open Graph and Twitter metadata, a generated 1200 x 630 sharing image, and WebSite/WebApplication JSON-LD describing actual features. It is statically rendered; only the account-deletion notice reads query parameters in a client component inside Suspense. The fixed navigation, animations, and server-rendered landing content are preserved.
+
+Only `/` appears in `/sitemap.xml`. Login, signup, recovery, invitations, dashboard, financial records, profile, documentation, and admin pages are `noindex, nofollow`. Private routes also receive `X-Robots-Tag` headers, including redirects and API responses. Netlify non-production contexts use a noindex landing page and empty sitemap. Do not add personal or role-gated pages to the sitemap.
+
+`/robots.txt` allows page crawling so search engines can read the noindex directives, and disallows `/api/`. Robots directives are **not access control**: authentication, ownership checks, and role checks still protect private data. Google explains this distinction in its [noindex guide](https://developers.google.com/search/docs/crawling-indexing/block-indexing).
+
+After deployment:
+
+1. Check `/robots.txt`, `/sitemap.xml`, the landing page canonical tag, and social preview images on the production URL.
+2. Verify ownership in [Google Search Console](https://search.google.com/search-console) and submit the production `/sitemap.xml` URL. Submission is manual; code changes cannot verify ownership or guarantee indexing.
+3. Inspect the landing URL in Search Console. Validate the JSON-LD with the [Schema Markup Validator](https://validator.schema.org/). No ratings, reviews, or pricing are invented to qualify for rich results.
+4. When adding a genuine public page, give it useful visible content, unique metadata, a self-referencing canonical, internal links, and a sitemap entry. Keep authenticated pages noindex.
+
+Run `npm run test:seo`, `npm run lint`, and `npm run build` before deployment. SEO tests use fixtures and do not connect to MongoDB or send emails. Titles, descriptions, relevant headings, server-rendered content, and stable URLs follow [Google's developer guidance](https://developers.google.com/search/docs/fundamentals/get-started-developers); rankings and search snippets remain controlled by search engines.
 
 ### Editing And Removing Finance Records
 
