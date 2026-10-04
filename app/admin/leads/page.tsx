@@ -2,6 +2,9 @@ import { AppShell } from "@/app/components/app-shell";
 import { AdminDetailsForm, LeadActions } from "@/app/components/admin/admin-forms";
 import { requireSuperAdmin } from "@/app/lib/data";
 import { getLeads } from "@/app/lib/admin-data";
+import { privatePageMetadata } from "@/app/lib/seo";
+
+export const metadata = privatePageMetadata("Manage leads", "NiveshFlow lead administration.");
 
 export default async function LeadsPage() {
   const admin = await requireSuperAdmin();

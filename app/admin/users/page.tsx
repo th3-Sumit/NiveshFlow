@@ -5,6 +5,9 @@ import { AdminDetailsForm, AdminUserActions } from "@/app/components/admin/admin
 import { Button } from "@/app/components/ui/button";
 import { requireSuperAdmin } from "@/app/lib/data";
 import { getManagedUsers } from "@/app/lib/admin-data";
+import { privatePageMetadata } from "@/app/lib/seo";
+
+export const metadata = privatePageMetadata("Manage users", "NiveshFlow user administration.");
 
 const colors = { active: "bg-teal-50 text-teal-800", inactive: "bg-rose-50 text-rose-700", invited: "bg-blue-50 text-blue-700", expired: "bg-amber-50 text-amber-800" };
 export default async function UsersPage({ searchParams }: { searchParams: Promise<{ query?: string; status?: string; page?: string }> }) {

@@ -3,6 +3,9 @@ import { FinanceWorkspace } from "@/app/components/finance/workspace";
 import { requireCurrentUser } from "@/app/lib/data";
 import { getFinanceList, getFinanceOptions } from "@/app/lib/finance-list-data";
 import type { FinanceSearchParams } from "@/app/lib/finance-list";
+import { privatePageMetadata } from "@/app/lib/seo";
+
+export const metadata = privatePageMetadata("Debt management", "Track your debts, repayment history, principal, interest, and fees.");
 
 export default async function DebtsPage({ searchParams }: { searchParams: Promise<FinanceSearchParams> }) {
   const user = await requireCurrentUser();

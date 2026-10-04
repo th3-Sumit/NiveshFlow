@@ -4,8 +4,12 @@ import { LockKeyhole, WalletCards } from "lucide-react";
 import { getDb, type UserDoc } from "@/app/lib/mongodb";
 import { InvitationForm } from "@/app/components/auth/invitation-form";
 import { FinanceBackdrop } from "@/app/components/auth/finance-backdrop";
+import { privatePageMetadata } from "@/app/lib/seo";
 
-export const metadata = { title: "Accept invitation | NiveshFlow", referrer: "no-referrer" as const };
+export const metadata = {
+  ...privatePageMetadata("Accept invitation", "Set your password to accept your NiveshFlow account invitation."),
+  referrer: "no-referrer" as const,
+};
 
 export default async function InvitationPage({ searchParams }: { searchParams: Promise<{ token?: string }> }) {
   const { token = "" } = await searchParams; let user: Pick<UserDoc, "name" | "email"> | null = null; let unavailable = false;

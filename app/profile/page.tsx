@@ -3,6 +3,9 @@ import { ProfileForm } from "@/app/components/profile/profile-form";
 import { DangerZone } from "@/app/components/profile/danger-zone";
 import { Card, CardContent } from "@/app/components/ui/card";
 import { requireCurrentUser } from "@/app/lib/data";
+import { privatePageMetadata } from "@/app/lib/seo";
+
+export const metadata = privatePageMetadata("Profile", "Manage your NiveshFlow profile and account settings.");
 
 type ProfileSearchParams = {
   error?: string;

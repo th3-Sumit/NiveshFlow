@@ -20,6 +20,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/app/components/ui/ca
 import { getFinanceDashboard } from "@/app/lib/data";
 import { formatCurrency } from "@/app/lib/money";
 import { getTransactionAmountDisplay } from "@/app/lib/transaction-display";
+import { privatePageMetadata } from "@/app/lib/seo";
+
+export const metadata = privatePageMetadata("Dashboard", "View your personal cash flow, account balances, recent transactions, and savings progress.");
 
 function StatTile({
   detail,

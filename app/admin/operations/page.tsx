@@ -2,6 +2,9 @@ import { AppShell } from "@/app/components/app-shell";
 import { MaintenanceButton } from "@/app/components/admin/maintenance-button";
 import { requireSuperAdmin } from "@/app/lib/data";
 import { getDb } from "@/app/lib/mongodb";
+import { privatePageMetadata } from "@/app/lib/seo";
+
+export const metadata = privatePageMetadata("Operations", "NiveshFlow platform operations.");
 
 export default async function OperationsPage() {
   const admin = await requireSuperAdmin(); const db = await getDb();

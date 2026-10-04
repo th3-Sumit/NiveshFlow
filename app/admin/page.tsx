@@ -4,6 +4,9 @@ import { AdminAnalytics } from "@/app/components/admin/admin-analytics";
 import { AdminDetailsForm } from "@/app/components/admin/admin-forms";
 import { requireSuperAdmin } from "@/app/lib/data";
 import { getAdminOverview } from "@/app/lib/admin-data";
+import { privatePageMetadata } from "@/app/lib/seo";
+
+export const metadata = privatePageMetadata("Admin dashboard", "NiveshFlow platform administration.");
 
 export default async function AdminPage() {
   const admin = await requireSuperAdmin();
